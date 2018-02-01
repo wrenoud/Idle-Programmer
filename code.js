@@ -1,97 +1,116 @@
-var lines=0;
-var proCost=10;
-var manCost=50;
-var cofCost=10;
-var recCost=10;
-var synCost=50;
-var numberProgammers = 0;
-var numberManagers = 0;
-var speed = 1000;
-var numberCoffee = 0;
-var numberSynergy = 0;
+var lines = 0;
+var speedOfTick = 1000;
+var timer = setInterval(increaseLines, speedOfTick);
+
+var costOfProgrammer = 10;
+var costOfManager = 50;
+var costOfCoffee = 10;
+var costOfRecursion = 10;
+var costOfSynergy = 50;
+var costOfKeyboard = 500;
+
+var numberOfProgammers = 0;
+var numberOfManagers = 0;
+var numberOfKeyboard = 0;
+
+var numberOfCoffee = 0;
+var numberOfSynergy = 0;
+var numberOfKeyboard = 0;
+
 var programmerIncrease = 1;
 var managerIncrease = 10;
+var keyboardIncrease = 100;
 
-
-
-var timer = setInterval(increaseLines, speed);
-
-function refresh()
-{
+function refresh() {
     //document.getElementById('speed').innerHTML = speed;
     document.getElementById('lines').innerHTML = lines;
-    document.getElementById('pro cost').innerHTML = proCost;
-    document.getElementById('man cost').innerHTML = manCost;
-    document.getElementById('cof cost').innerHTML = cofCost;
-    document.getElementById('rec cost').innerHTML = recCost;
-    document.getElementById('syn cost').innerHTML = synCost;
+    document.getElementById('pro cost').innerHTML = "cost: " + costOfProgrammer;
+    document.getElementById('man cost').innerHTML = "cost: " + costOfManager;
+    document.getElementById('cof cost').innerHTML = "cost: " + costOfCoffee;
+    document.getElementById('rec cost').innerHTML = "cost: " + costOfRecursion;
+    document.getElementById('syn cost').innerHTML = "cost: " + costOfSynergy;
+    document.getElementById('key cost').innerHTML = "cost: " + costOfKeyboard;
+    
+    document.getElementById('pro inc').innerHTML = "+" + numberOfProgammers*programmerIncrease;
+    document.getElementById('man inc').innerHTML = "+" + managerIncrease * numberOfManagers;
+    document.getElementById('key inc').innerHTML = "+" + Math.pow(numberOfKeyboard,keyboardIncrease);
 }
 
-function buyProgrammer()
-{
-    if(lines >= proCost)
+//########### Workers ###########
+
+function buyProgrammer() {
+    if(lines >= costOfProgrammer)
     {
-        lines -= proCost;
-        numberProgammers += 1;
-        refresh()
-        proCost = Math.floor(10 * Math.pow(1.1,numberProgammers)); 
+        lines -= costOfProgrammer;
+        numberOfProgammers += 1;
+        costOfProgrammer = Math.floor(10 * Math.pow(1.1,numberOfProgammers)); 
+    }
+    refresh();
+}
+
+function buyManager() {
+    if(lines >= costOfManager)
+    {
+        lines -= costOfManager;
+        numberOfManagers += 1;
+        costOfManager = Math.floor(100 * Math.pow(1.5,numberOfManagers)); 
+    }
+    refresh();
+}
+
+function buyKeyboard() {
+    if(lines >= costOfKeyboard)
+    {
+        lines -= costOfKeyboard;
+        numberOfKeyboard += 1;
+        costOfKeyboard = Math.floor(100 * Math.pow(2,numberOfKeyboard)); 
+    }
+    refresh();
+}
+
+//########### Upgrades ###########
+
+function buyRecursion()
+{
+    if(lines >= costOfRecursion)
+    {
+        clearInterval(timer);
+        lines -= costOfRecursion;
+        speedOfTick = speedOfTick / 2;
+        costOfRecursion = Math.floor(100 * Math.pow(1.4,1000/speedOfTick)); 
+        var timer = setInterval(increaseLines, speedOfTick);
     }
     refresh();
 }
 
 function buyCoffee()
 {
-    if(lines >= cofCost)
+    if(lines >= costOfCoffee)
     {
         
-        lines -= cofCost;
-        numberCoffee += 1;
-        cofCost = Math.floor(1*Math.pow(cofCost,1.4));
+        lines -= costOfCoffee;
+        numberOfCoffee += 1;
+        costOfCoffee = Math.floor(1*Math.pow(costOfCoffee,1.4));
         programmerIncrease += 1;
         
     }
     refresh();
 }
 
-
 function buySynergy()
 {
-    if(lines >= synCost)
+    if(lines >= costOfSynergy)
     {
-        lines -= synCost;
-        numberSynergy += 1;
-        synCost = Math.floor(Math.pow(synCost,1.1));
+        lines -= costOfSynergy;
+        numberOfSynergy += 1;
+        costOfSynergy = Math.floor(Math.pow(costOfSynergy,1.1));
         managerIncrease *= 2;
         
     }
     refresh();
 }
 
-function buyRecursion()
-{
-    if(lines >= recCost)
-    {
-        clearInterval(timer);
-        lines -= recCost;
-        speed = speed / 2;
-        refresh()
-        recCost = Math.floor(100 * Math.pow(1.4,1000/speed)); 
-        var timer = setInterval(increaseLines, speed);
-    }
-    refresh();
-}
-
-function buyManager()
-{
-    if(lines >= manCost)
-    {
-        lines -= manCost;
-        numberManagers += 1;
-        refresh()
-        manCost = Math.floor(100 * Math.pow(1.5,numberManagers)); 
-    }
-    refresh();
-}
+//########### General ###########
 
 function writeCode()
 {
@@ -99,14 +118,12 @@ function writeCode()
     refresh();
 }
 
-
-
 function increaseLines()
 {
-    lines += numberProgammers*programmerIncrease;
-    lines += managerIncrease * numberManagers;
+    lines += numberOfProgammers*programmerIncrease;
+    lines += managerIncrease * numberOfManagers;
+    lines += Math.pow(numberOfKeyboard,keyboardIncrease);
     refresh();
 }
 
 refresh();
-
