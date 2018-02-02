@@ -1,10 +1,11 @@
 var lines;
 
 try {
-    lines = getCookie("lines2");
+    //lines = getCookie("lines2");
+    lines = 0;
 }
 catch(err) {
-    lines = 0;
+    
 }
 
 var speedOfTick = 1000;
@@ -136,8 +137,8 @@ function setCookie(name, value) {
 }
 
 function getCookie(name)
-  {
+{
     var re = new RegExp(name + "=([^;]+)");
     var value = re.exec(document.cookie);
     return (value != null) ? unescape(value[1]) : null;
-  }
+}
