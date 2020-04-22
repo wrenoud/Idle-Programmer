@@ -1,15 +1,28 @@
 var lines;
 
 try {
-    //lines = getCookie("lines2");
-    lines = 0;
+    lines = getCookie("lines2");
 }
 catch(err) {
-    
+    lines = 0;    
 }
 
 var speedOfTick = 1000;
 var timer = setInterval(increaseLines, speedOfTick);
+
+class Upgrade {
+  constructor(id, base_cost, cost_increase_rate, effect, count=0){
+    this.id = id;
+    this.base_cost = base_cost;
+    this.cost_increase_rate = cost_increase_rate;
+    this.loc_effect = effect;
+    this.count = count;
+  };
+  
+  cost(){
+    return this.base_cost * Math.power(1 + this.cost_increase_rate, this.count);
+  }
+}
 
 var costOfProgrammer = 10;
 var costOfManager = 1500;
@@ -30,23 +43,53 @@ var programmerIncrease = 1;
 var managerIncrease = 10;
 var keyboardIncrease = 100;
 
+var coffee = new Upgrade("cof cost", 25, 1, "+1");
+var synergy = new Upgrade("syn cost", 60000, 1, "*2");
+var recursion = new Upgrade("rec cost", 9999999, 1, "*2");
 
+var numeral = numeral;
+
+function format(number)
+{
+  if(number < 1000)
+    return number;
+  else
+    return numeral(number).format('0.0 a').trim();
+}
+
+function format_payout(count, increase)
+{
+  return "+" + format(increase) + " LOC/s (total: " + format((count * increase)) + ")";
+}
+
+function get_increase()
+{
+  return numberOfProgammers * programmerIncrease
+    + numberOfManagers * managerIncrease
+    + numberOfKeyboard * keyboardIncrease;
+}
+
+function refresh_loc()
+{
+      document.getElementById('lines').innerHTML = format(lines) + " LOC";
+}
 
 function refresh() {
-    //document.getElementById('speed').innerHTML = speed;
-    document.getElementById('lines').innerHTML = lines;
-    document.getElementById('pro cost').innerHTML = "cost: " + costOfProgrammer;
-    document.getElementById('man cost').innerHTML = "cost: " + costOfManager;
-    document.getElementById('cof cost').innerHTML = "cost: " + costOfCoffee;
-    document.getElementById('rec cost').innerHTML = "cost: " + costOfRecursion;
-    document.getElementById('syn cost').innerHTML = "cost: " + costOfSynergy;
-    document.getElementById('key cost').innerHTML = "cost: " + costOfKeyboard;
+   refresh_loc();
+    document.getElementById('locps').innerHTML = "(+" + format(get_increase()) + " LOC/s)";
+
+    document.getElementById('pro cost').innerHTML = "cost: " + format(costOfProgrammer) + " (" + format(numberOfProgammers) + ")";
+    document.getElementById('man cost').innerHTML = "cost: " + format(costOfManager) + " (" + format(numberOfManagers) + ")";
+    document.getElementById('cof cost').innerHTML = "cost: " + format(costOfCoffee) + " (" + format(numberOfCoffee) + ")";
+    document.getElementById('rec cost').innerHTML = "cost: " + format(costOfRecursion);
+    document.getElementById('syn cost').innerHTML = "cost: " + format(costOfSynergy) + " (" + format(numberOfSynergy) + ")";
+    document.getElementById('key cost').innerHTML = "cost: " + format(costOfKeyboard) + " (" + format(numberOfKeyboard) + ")";
     
-    document.getElementById('pro inc').innerHTML = "+" + (1000 / speedOfTick) * (numberOfProgammers * programmerIncrease);
-    document.getElementById('man inc').innerHTML = "+" + (1000 / speedOfTick) * (numberOfManagers * managerIncrease);
-    document.getElementById('key inc').innerHTML = "+" + (1000 / speedOfTick) * (numberOfKeyboard * keyboardIncrease);
+    document.getElementById('pro inc').innerHTML = format_payout(numberOfProgammers, programmerIncrease);
+    document.getElementById('man inc').innerHTML = format_payout(numberOfManagers, managerIncrease);
+    document.getElementById('key inc').innerHTML = format_payout(numberOfKeyboard, keyboardIncrease);
     
-    setCookie("lines2", lines);
+    setCookie("lines2", format(lines));
 }
 
 //########### Workers ###########
@@ -117,15 +160,13 @@ function buySynergy() {
 //########### General ###########
 
 function writeCode() {
-    lines += 1;
-    refresh();
+  lines += 1;
+  refresh_loc();
 }
 
 function increaseLines() {
-    lines += numberOfProgammers * programmerIncrease;
-    lines += numberOfManagers * managerIncrease;
-    lines += numberOfKeyboard * keyboardIncrease;
-    refresh();
+  lines += get_increase();
+  refresh_loc();
 }
 
 refresh();
